@@ -1,0 +1,377 @@
+﻿$def with(_config)
+<!DOCTYPE html>
+<html>
+<head>
+    <title>webtest</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+    <link href="/static/bootstrap-3.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/bootstrap-3.3.0/css/bootstrap-theme.min.css" rel="stylesheet">
+    <script src="/static/jquery/jquery-2.1.1.min.js"></script>
+    <script src="/static/bootstrap-3.3.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        setInterval(function(){
+            $$.ajax({
+                cache: true,
+                type: "GET",
+                url: "freshpage",
+                async: true,
+                error: function(request) {
+                    if(request.status == 400)
+                        alert(request.statusText);
+                    else if(request.status == 500)
+                        alert(request.statusText);
+                },
+                success: function(data) {
+                    var ret = data
+                    if(ret.code != 200){
+                        ;
+                    }else{
+                        var obj = JSON.parse(data.message);
+                        if(obj.run){
+                            //document.getElementById('dotest').disabled = true;
+                            document.getElementsByName("pagetitle")[0].innerText="测试中";
+                        }
+                        else {
+                            //document.getElementById('dotest').disabled = false;
+                            document.getElementsByName("pagetitle")[0].innerText="测试页面";
+                        }
+                        for(var i = 0; i < obj.cases.length; i++){
+                            var cs =  obj.cases[i];
+                            for(var j = 0; j < cs.data.length; j++){
+                                var csi =  cs.data[j];
+                                document.getElementById(csi.id +'status').innerText=csi.status;
+
+                            }
+                        }
+                    }
+                }
+            });
+        },3000);
+        $for item in _config.cases:
+            $$(function () {
+                $$('#collapse$item["bank"]').collapse({
+                    toggle: false
+                })
+            });
+
+        function submit() {
+            document.getElementById('dotest').disabled = true;
+            var enn = 0,sc_run = 0,org = '';
+            if (document.getElementById('envself').parentNode.className.indexOf('active') != -1) enn = 0
+            if (document.getElementById('envdev').parentNode.className.indexOf('active') != -1) enn = 1
+            if (document.getElementById('envbeta').parentNode.className.indexOf('active') != -1) enn = 2
+            var org = document.getElementById('org_sel').value
+            $$.ajax({
+                cache: true,
+                type: "POST",
+                url: "starttest",
+                data:{envs:enn,sc_run:sc_run,org:org},
+                async: false,
+                error: function(request) {
+                    document.getElementById('dotest').disabled = false;
+                    if(request.status == 400)
+                        alert(request.statusText);
+                    else if(request.status == 500)
+                        alert(request.statusText);
+                },
+                success: function(data) {
+                    document.getElementById('dotest').disabled = false;
+                    var ret = JSON.parse(data)
+                    if(ret.code != 200){
+                        alert(ret.message);
+                    }else{
+                        document.getElementsByName("pagetitle")[0].innerText="测试中";
+                    }
+                }
+            });
+            return false;
+        }
+
+        function addcasebutton() {
+            $$(function() {
+                $$('#myModal').modal({
+                    keyboard: true,backdrop:false
+                })
+            });
+            return false;
+        }
+        function addcase(){
+            var orgg =  document.getElementById('addorg').value;
+            var typee =  document.getElementById('addtype').value;
+            var logintypee =  document.getElementById('addlogintype').value;
+            var usernamee =  document.getElementById('addusername').value;
+            var pwdd =  document.getElementById('addpwd').value;
+            if(usernamee == '' || pwdd == '') return;
+            $$.ajax({
+                cache: true,
+                type: "POST",
+                url:'additem',
+                data:{orgg:orgg,typee:typee,logintypee:logintypee,usernamee:usernamee,pwdd:pwdd},// 你的formid
+                async: false,
+                error: function(request) {
+                    alert("server exception");
+                },
+                success: function(data) {
+                    var ret = JSON.parse(data)
+                    if(ret.code == 200)
+                        location.reload()
+                    else alert(ret.message);
+                }
+            });
+        }
+        function stoptest() {
+            alert(0);
+            return false;
+        }
+        function singlepost(obj){
+            var id = obj.parentNode.parentNode.id;
+            var value = document.getElementById(id + "otp").value;
+            if(value == ''){
+                document.getElementById(id + "otp").focus();
+                return;
+            }
+            $$.ajax({
+                cache: true,
+                type: "POST",
+                url:'singlepost',
+                data:{id:id,value:value},// 你的formid
+                async: false,
+                error: function(request) {
+                    alert("Connection error");
+                },
+                success: function(data) {
+                    var ret = JSON.parse(data)
+                    if(ret.code == 200){
+                    }
+                }
+            });
+        }
+        function singleview(obj){
+            var id = obj.parentNode.parentNode.id;
+            window.open('/viewitem/' + id);
+        }
+        function  freshimg(obj){
+            var id = obj.parentNode.id;
+            $$.ajax({
+                cache: true,
+                type: "POST",
+                url:'freshimg',
+                data:{id:id},// 你的formid
+                async: false,
+                error: function(request) {
+                    alert("Connection error");
+                },
+                success: function(data) {
+                    var ret = JSON.parse(data)
+                    if(ret.code == 200){
+                        location.reload()
+                    }
+                }
+            });
+        }
+        function singledel(obj){
+            var id = obj.parentNode.parentNode.id;
+            $$.ajax({
+                cache: true,
+                type: "POST",
+                url:'delitem',
+                data:{id:id},// 你的formid
+                async: false,
+                error: function(request) {
+                    alert("Connection error");
+                },
+                success: function(data) {
+                    var ret = JSON.parse(data)
+                    if(ret.code == 200){
+                        location.reload()
+                    }
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+<div class="container">
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">添加任务</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form">
+                  <div class="form-group">
+                      <label class="col-sm-2 control-label">机构</label>
+                      <select class="col-sm-10 form-control" style="float: right;width: 81.33333333%;" id="addorg">
+                        $for s in _config.org:
+                            $if s['name'] == 'all':
+                                $continue
+                            <option value="$s['org']">$s['name']</option>
+                      </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-sm-2 control-label">渠道</label>
+                    <select class="col-sm-10 form-control" style="float: right;width: 81.33333333%;" id="addtype">
+                          <option value="all">全部数据</option>
+                          <option value="debit">借记卡数据</option>
+                          <option value="credit">信用卡数据</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-sm-2 control-label">类型</label>
+                      <select class="col-sm-10 form-control" style="float: right;width: 81.33333333%;" id="addlogintype">
+                          <option value="cardnum">卡号</option>
+                          <option value="username">用户名</option>
+                          <option value="phonenum">手机号</option>
+                          <option value="pidnum">身份证</option>
+                      </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-sm-2 control-label">用户名</label>
+                    <div class="col-sm-10">
+                      <input class="form-control" id="addusername" type="text" placeholder="输入用户名">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="addpwd" class="col-sm-2 control-label">密码</label>
+                    <div class="col-sm-10">
+                      <input class="form-control" id="addpwd" type="text" placeholder="输入密码">
+                    </div>
+                  </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="addcase()">添加</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+    <div class="panel panel-default">
+        <div class="panel-heading" name="pagetitle">测试页面</div>
+    </div>
+    <div class="panel-body">
+        <div class="form-inline">
+            <div class="row">
+                <!-- <div class="col-sm-2">
+                    <label>并行</label>
+                    <div id="concurrence_group" class="btn-group" data-toggle="buttons">
+                        <label class="btn btn-default active">
+                            <input type="radio" name="options" id="s_run" autocomplete="off" checked>串行
+                        </label>
+                        <label class="btn btn-default">
+                            <input type="radio" name="options" id="c_run" autocomplete="off"> 并行
+                        </label>
+                    </div>
+                </div> -->
+                <div class="col-sm-3">
+                    <label>环境</label>
+                    <div class="btn-group" data-toggle="buttons">
+                        <label class="btn btn-default
+                        $if _config.envs == '0':
+                            active
+                        ">
+                            <input type="radio" name="envself" id="envself" autocomplete="off">本机
+                        </label>
+                        <label class="btn btn-default
+                        $if _config.envs == '1':
+                            active
+                        ">
+                            <input type="radio" name="envdeb" id="envdev" autocomplete="off">220
+                        </label>
+                        <label class="btn btn-default
+                        $if _config.envs == '2':
+                            active
+                        ">
+                            <input type="radio" name="envbeta" id="envbeta" autocomplete="off">beta
+                        </label>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <label>机构</label>
+                    <select class="form-control" id="org_sel">
+                        $for s in _config.org:
+                            <option value="$s['org']">$s['name']</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-default" onclick="submit()" id="dotest">测试</button>
+                <!--<button type="submit" class="btn btn-default" onclick="stoptest()">停测</button>-->
+                <button type="submit" class="btn btn-default" onclick="addcasebutton()" style="float:right">添加任务</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- toggle body-->
+    <div class="panel-group" id="accordion">
+        $for item in _config.cases:
+            $if len(item["data"]) == 0:
+                $continue
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse$item['bank']">
+                            bank:$item["bank"] &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                            <span class="text-right">总数：$len(item["data"])</span>
+                        </a>
+                    </h4>
+                </div>
+
+                <div id="collapse$item['bank']" class="panel-collapse collapse in">
+                    <div class="panel-body" style="padding: 0px 0px 0px 0px">
+                        <div class="table-responsive">
+                            <table class="table table-striped" >
+                                <thead>
+                                <tr>
+                                    <th width="145px">用户名</th>
+                                    <th width="45px">密码</th>
+                                    <th width="45px">渠道</th>
+                                    <th width="45px">类型</th>
+                                    <th width="45px">状态</th>
+                                    <!--<th width="80px">期望状态</th>
+                                    <th width="100px">ocr_img</th>
+                                    <th>ocr</th>-->
+                                    <th width="80px">手机otp</th>
+                                    <th width="45px">提交</th>
+                                    <th width="45px">查看</th>
+                                    <th width="45px">删除</th>
+                                    <th width="45px"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                $for tr in item["data"]:
+                                    <tr id="$tr['id']">
+                                        <td>$tr["user"]</td>
+                                        <td>$tr["pwd"]</td>
+                                        <td>$tr["entry"]</td>
+                                        <td>$tr["logintype"]</td>
+                                        <td id="$tr['id']status" >$tr["status"]</td>
+                                        <!--
+                                        <td>tr["expect"]</td>
+                                        <td id="$tr['id']img" onclick="freshimg(this)">&nbsp</td>
+                                        <td><input type="text" class="form-control" id="$tr['id']ocr" placeholder="输入ocr"></td>-->
+                                        <td width="80px"><input type="text" class="form-control" id="$tr['id']otp" placeholder="输入otp"></td>
+                                        <td>
+                                            <button type="submit" class="btn btn-default" onclick="singlepost(this)">提交</button>
+                                        </td>
+                                        <td>
+                                            <button type="submit" class="btn btn-default" onclick="singleview(this)">查看</button>
+                                        </td>
+                                        <td>
+                                            <button type="submit" class="btn btn-default" onclick="singledel(this)">删除</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+    </div>
+
+</div> <!-- /container -->
+</body>
+</html>

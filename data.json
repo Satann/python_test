@@ -1,0 +1,113 @@
+{
+  "server": {
+    "0": {
+      "sendtaskurl": "http://172.18.8.220:8088/cloudPQMonitor/sendRequest.do",
+      "findtaskurl": "http://172.18.8.220:8088/cloudPQMonitor/findReqTaskStatus.do"
+    },
+    "1": {
+      "sendtaskurl": "http://172.18.8.220:8088/cloudPQMonitor/sendRequest.do",
+      "findtaskurl": "http://172.18.8.220:8088/cloudPQMonitor/findReqTaskStatus.do"
+    },
+    "2": {
+      "sendtaskurl": "http://27.109.127.189/cloudPQMonitor/sendRequest.do",
+      "findtaskurl": "http://27.109.127.189/cloudPQMonitor/findReqTaskStatus.do"
+    }
+  },
+  "org": [
+    {
+      "name": "all",
+      "bankid": "0",
+      "org": "all"
+    },
+    {
+      "name": "工商银行",
+      "bankid": "1",
+      "org": "icbc"
+    },
+    {
+      "name": "农业银行",
+      "bankid": "2",
+      "org": "abc"
+    },
+    {
+      "name": "中国银行",
+      "bankid": "3",
+      "org": "boc"
+    },
+    {
+      "name": "建设银行",
+      "bankid": "4",
+      "org": "ccb"
+    },
+    {
+      "name": "交通银行",
+      "bankid": "5",
+      "org": "bcm"
+    },
+    {
+      "name": "招商银行",
+      "bankid": "6",
+      "org": "cmb"
+    },
+    {
+      "name": "中信银行",
+      "bankid": "7",
+      "org": "cncb"
+    },
+    {
+      "name": "光大银行",
+      "bankid": "8",
+      "org": "cebc"
+    },
+    {
+      "name": "浦发银行",
+      "bankid": "9",
+      "org": "spdb"
+    },
+    {
+      "name": "民生银行",
+      "bankid": "10",
+      "org": "cmbc"
+    },
+    {
+      "name": "兴业银行",
+      "bankid": "11",
+      "org": "cib"
+    },
+    {
+      "name": "广发银行",
+      "bankid": "12",
+      "org": "cgb"
+    },
+    {
+      "name": "上海银行",
+      "bankid": "13",
+      "org": "bosh"
+    },
+    {
+      "name": "华夏银行",
+      "bankid": "14",
+      "org": "hxb"
+    }
+  ],
+  "cases": [
+    {
+      "bank": "abc",
+      "data": [
+        {
+          "id": "abcone",
+          "org": "abc",
+          "user": "testabc",
+          "pwd": "qweqwe12",
+          "entry": "all",
+          "logintype": "username",
+          "resp": "",
+          "status": "0",
+          "expect": "202",
+          "createtime": 0
+        }
+      ]
+    }
+  ],
+  "version": 1.0
+}
